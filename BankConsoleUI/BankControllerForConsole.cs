@@ -1,16 +1,19 @@
 ﻿using BankingLibrary;
+using DataAccessLibrary;
+using DataAccessLibrary.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using static BankingLibrary.Enums;
 
-namespace NADBankConsoleUI
+namespace BankConsoleUI
 {
     public class BankControllerForConsole
     {
-        public List<ClientModel> users = new List<ClientModel>();
         public ClientModel currentUser;
         public List<TransactionModel> transactions = new List<TransactionModel>();
+        private readonly SQLProcesses sql = new SQLProcesses(GetConnectionString());
         internal void RunMainMenu()
         {
             bool isValidEntry = false;
@@ -41,21 +44,21 @@ namespace NADBankConsoleUI
                 {
                     case 1: // Log in
                         {
-                            Console.WriteLine("Please pardon our dust!");
+                            currentUser = UserLogin();
+
+                            Console.WriteLine("Login successful! Press enter to continue.");
                             Console.ReadLine();
 
-                            RunMainMenu();
+                            RunAccountMenu(currentUser);
 
                             break;
                         }
                     case 2: // Sign up
                         {
-                            ClientModel client = new ClientModel();
+                            currentUser = RunSignUp();
 
-                            ConsoleHelpers.GetInitialPersonalInfo(client);
+                            SaveClientToDB(LoadClientInfoToDBModel(currentUser));
 
-                            users.Add(client);
-                            currentUser = client;
 
                             Console.WriteLine("Profile successfully created. Press enter to open account menu.");
                             Console.ReadLine();
@@ -71,6 +74,133 @@ namespace NADBankConsoleUI
                         }
                 }
             }
+        }
+
+        private FullClientModel LoadClientInfoToDBModel(ClientModel currentUser)
+        {
+            FullClientModel client = new FullClientModel
+            {
+                EmailAddress = currentUser.EmailAddress,
+                SSN = currentUser.SSN,
+                FirstName = currentUser.FirstName,
+                LastName = currentUser.LastName,
+                BirthDate = currentUser.BirthDate,
+                Password = currentUser.Password
+            };
+
+            return client;
+        }
+        private void SaveClientToDB(FullClientModel client)
+        {
+            sql.SaveClientInfoToDB(client);
+        }
+        private ClientModel RunSignUp()
+        {
+            Console.Clear();
+
+            bool isUniqueEmail = false;
+            string newEmail = "";
+            List<EmailAddressModel> emailAddresses = sql.GetEmailAddresses();
+
+            do
+            {
+                string emailEntry = ConsoleHelpers.GetEmailAddress();
+
+                foreach (var emailAddress in emailAddresses)
+                {
+                    if (emailEntry == emailAddress.EmailAddress)
+                    {
+                        Console.WriteLine("Email address already in use. Please try again.");
+                        Console.ReadLine();
+
+                        isUniqueEmail = false;
+
+                        break;
+                    }
+                    else
+                    {
+                        isUniqueEmail = true;
+                        newEmail = emailEntry;
+                    }
+                }
+            } while (!isUniqueEmail);
+
+            string newFirstName = ConsoleHelpers.GetNameFromConsole("Please enter your first name: ");
+            string newLastName = ConsoleHelpers.GetNameFromConsole("Please enter your last name: ");
+            string newSSN = ConsoleHelpers.GetSSNFromUser("Please enter a 9 digit Social Security Number: ");
+            string newBirthDate = ConsoleHelpers.GetBirthDateFromConsole();
+
+            ClientModel newClient = new ClientModel
+            {
+                EmailAddress = newEmail,
+                FirstName = newFirstName,
+                LastName = newLastName,
+                SSN = newSSN,
+                BirthDate = newBirthDate
+            };
+
+            Console.WriteLine("User information accepted. Press enter to proceed.");
+            Console.ReadLine();
+
+            bool isMatch = false;
+            do
+            {
+                string passwordEntry = ConsoleHelpers.GetPasswordFromUser("Please create a password. Password must be between 8 and 15 characters.: ");
+                Console.WriteLine();
+
+                string passwordConfirmation = ConsoleHelpers.GetPasswordFromUser("Please re-enter your password.: ");
+
+                if (passwordEntry != passwordConfirmation)
+                {
+                    Console.WriteLine("Passwords do not match. Please try again.");
+                    Console.ReadLine();
+
+                    isMatch = false;
+                }
+                else
+                {
+                    Console.WriteLine("Password created successfully.");
+
+                    newClient.Password = passwordEntry;
+
+                    isMatch = true;
+                }
+            } while (!isMatch);
+
+            return newClient;
+        }
+
+        private ClientModel UserLogin()
+        {
+            bool validPassword = false;
+            string emailEntry = ClientAuthentication.EmailAddressValidation(sql);
+
+            FullClientModel dbDetails = sql.GetFullClientDetails(emailEntry);
+
+            ClientModel user = new ClientModel
+            {
+                FirstName = dbDetails.FirstName,
+                LastName = dbDetails.LastName,
+                EmailAddress = emailEntry,
+                Password = dbDetails.Password,
+                SSN = dbDetails.SSN,
+            };
+
+            do
+            {
+                string passwordEntry = ConsoleHelpers.GetPasswordFromUser("Please enter your password: ");
+
+                if (passwordEntry == user.Password)
+                {
+                    validPassword = true;
+                }
+                else
+                {
+                    validPassword = false;
+                }
+            } while (!validPassword);
+;
+            return user;
         }
         internal void RunAccountMenu(ClientModel currentUser)
         {
@@ -103,54 +233,38 @@ namespace NADBankConsoleUI
             {
                 switch (selection)
                 {
-                    case 1: // View accounts
+                    case 1: /// TODO Build accounts view
                         {
-                            ConsoleHelpers.DisplayAccountsDetails(currentUser);
-
                             ReturnToAccountMenu(currentUser);
 
                             break;
                         }
-                    case 2: // Open an account
+                    case 2: /// TODO Build open accounts
                         {
-                            OpenAccount(currentUser);
-
                             ReturnToAccountMenu(currentUser);
 
                             break;
                         }
-                    case 3: // Perform transaction
+                    case 3: /// TODO Build transactions
                         {
-                            RunTransactions(currentUser);
-
                             ReturnToAccountMenu(currentUser);
 
                             break;
                         }
-                    case 4: // View existing info
+                    case 4: /// TODO Build view existing info
                         {
-                            ConsoleHelpers.DisplayUserInformation(currentUser);
-
                             ReturnToAccountMenu(currentUser);
 
                             break;
                         }
-                    case 5: // Update existing info
+                    case 5: /// TODO Update existing info
                         {
-                            ConsoleHelpers.UpdatePersonalInfo(currentUser);
-
-                            Console.WriteLine();
-
-                            ConsoleHelpers.DisplayUserInformation(currentUser);
-
                             ReturnToAccountMenu(currentUser);
 
                             break;
                         }
-                    case 6: // View transaction log
+                    case 6: /// TODO Build view transaction log
                         {
-                            ConsoleHelpers.DisplayTransactionLog(transactions);
-
                             ReturnToAccountMenu(currentUser);
 
                             break;
@@ -166,7 +280,6 @@ namespace NADBankConsoleUI
                 }
             }
         }
-
         internal void ReturnToAccountMenu(ClientModel currentUser)
         {
             Console.WriteLine();
@@ -175,42 +288,40 @@ namespace NADBankConsoleUI
 
             RunAccountMenu(currentUser);
         }
+        //internal void OpenAccount(ClientModel currentUser)
+        //{
+        //    Console.Clear();
 
-        internal void OpenAccount(ClientModel currentUser)
-        {
-            Console.Clear();
+        //    AccountTypes type;
 
-            AccountTypes type;
+        //    if (CanOpenNewAccount(currentUser))
+        //    {
+        //        type = GetDesiredAccountType();
 
-            if (CanOpenNewAccount(currentUser))
-            {
-                type = GetDesiredAccountType();
+        //        decimal amount = GetInitialDeposit(type);
 
-                decimal amount = GetInitialDeposit(type);
+        //        if (type == AccountTypes.Checking)
+        //        {
+        //            TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
+        //            transaction.OpenCheckingAccount(currentUser, amount);
+        //            transactions.Add(transaction);
+        //        }
+        //        else if (type == AccountTypes.Savings)
+        //        {
+        //            TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
+        //            transaction.OpenSavingsAccount(currentUser, amount);
+        //            transactions.Add(transaction);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine();
+        //        Console.WriteLine("Maximum number of accounts reached, please try closing an account before opening a new one (press enter to continue).");
+        //        Console.ReadLine();
 
-                if (type == AccountTypes.Checking)
-                {
-                    TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
-                    transaction.OpenCheckingAccount(currentUser, amount);
-                    transactions.Add(transaction);
-                }
-                else if (type == AccountTypes.Savings)
-                {
-                    TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
-                    transaction.OpenSavingsAccount(currentUser, amount);
-                    transactions.Add(transaction);
-                }
-            }
-            else
-            {
-                Console.WriteLine();
-                Console.WriteLine("Maximum number of accounts reached, please try closing an account before opening a new one (press enter to continue).");
-                Console.ReadLine();
-
-                RunAccountMenu(currentUser);
-            }
-        }
-
+        //        RunAccountMenu(currentUser);
+        //    }
+        //}
         internal decimal GetInitialDeposit(AccountTypes type)
         {
             decimal amount = 0.00M;
@@ -246,7 +357,6 @@ namespace NADBankConsoleUI
             } while (!isValid);
             return amount;
         }
-
         internal AccountTypes GetDesiredAccountType()
         {
             AccountTypes type;
@@ -282,78 +392,7 @@ namespace NADBankConsoleUI
 
             return type;
         }
-
-        internal bool CanOpenNewAccount(ClientModel client)
-        {
-            int numberOfOpenAccounts = client.Accounts.Count;
-
-            if (numberOfOpenAccounts < client.MaxAccounts)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        internal void RunTransactions(ClientModel currentUser)
-        {
-            Console.Clear();
-
-            bool isValidSelection = false;
-            int selection;
-
-            do
-            {
-                StandardMessages.TransactionMenu();
-                selection = ConsoleHelpers.GetIntFromConsole(StandardMessages.EnterSelection());
-
-                if (selection > 0 && selection < 6)
-                {
-                    isValidSelection = true;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid entry, please try again (press enter).");
-                    Console.ReadLine();
-                }
-            } while (!isValidSelection);
-
-            if (isValidSelection)
-            {
-                switch (selection)
-                {
-                    case 1: // Debit
-                        {
-                            PerformDebitTransaction(currentUser);
-                            break;
-                        }
-                    case 2: // Credit
-                        {
-                            PerformCreditTransaction(currentUser);
-                            break;
-                        }
-                    case 3: // Transfer between current user
-                        {
-                            PerformTransferTransaction(currentUser);
-                            break;
-                        }
-                    case 4: // Transfer to other user
-                        {
-                            Console.WriteLine("Under construction");
-                            break;
-                        }
-                    case 5: // Return to Account Menu
-                        {
-                            ReturnToAccountMenu(currentUser);
-
-                            break;
-                        }
-                }
-            }
-        }
-        internal decimal GetTransactionAmount(TransactionTypes type, AccountModel account)
+        internal decimal GetTransactionAmount(TransactionTypes type, BankingLibrary.AccountModel account)
         {
             decimal amount = 0.00M;
             bool isValidAmount = false;
@@ -394,69 +433,89 @@ namespace NADBankConsoleUI
 
             return amount;
         }
-        internal void PerformDebitTransaction(ClientModel currentUser)
+        //internal void PerformDebitTransaction(ClientModel currentUser)
+        //{
+        //    ConsoleHelpers.DisplayAccountsDetails(currentUser);
+
+        //    BankingLibrary.AccountModel account = ConsoleHelpers.GetAccountSelection("Please select the desired account: ", currentUser);
+
+        //    TransactionTypes type = TransactionTypes.Debit;
+        //    decimal amount = GetTransactionAmount(type, account);
+
+        //    TransactionModel transaction = new TransactionModel(type, amount);
+        //    transaction.DebitTransaction(account, amount);
+
+        //    transactions.Add(transaction);
+        //}
+        //internal void PerformCreditTransaction(ClientModel currentUser)
+        //{
+        //    ConsoleHelpers.DisplayAccountsDetails(currentUser);
+
+        //    BankingLibrary.AccountModel account = ConsoleHelpers.GetAccountSelection("Please select the desired account: ", currentUser);
+
+        //    TransactionTypes type = TransactionTypes.Credit;
+        //    decimal amount = GetTransactionAmount(type, account);
+
+        //    TransactionModel transaction = new TransactionModel(type, amount);
+        //    transaction.CreditTransaction(account, amount);
+
+        //    transactions.Add(transaction);
+        //}
+        //internal void PerformTransferTransaction(ClientModel currentUser)
+        //{
+        //    TransactionTypes transfer = TransactionTypes.Transfer;
+        //    bool isAccountConflict = false;
+        //    BankingLibrary.AccountModel toAccount, fromAccount;
+
+        //    do
+        //    {
+        //        ConsoleHelpers.DisplayAccountsDetails(currentUser);
+
+        //        toAccount = ConsoleHelpers.GetAccountSelection("Please select the account you would like to send money to: ", currentUser);
+
+        //        fromAccount = ConsoleHelpers.GetAccountSelection("Please select the account you would like to use to send money: ", currentUser);
+
+        //        if (toAccount == fromAccount)
+        //        {
+        //            Console.WriteLine();
+        //            Console.WriteLine("You selected the same account, please try again (press enter).");
+        //            Console.ReadLine();
+
+        //            isAccountConflict = true;
+        //        }
+        //        else
+        //        {
+        //            isAccountConflict = false;
+        //        }
+        //    } while (isAccountConflict);
+
+        //    decimal amount = GetTransactionAmount(transfer, fromAccount);
+
+        //    TransactionModel transaction = new TransactionModel(transfer, toAccount, fromAccount, amount);
+        //    transaction.TransferTransaction(toAccount, fromAccount, amount);
+
+        //    transactions.Add(transaction);
+        //}
+        public static string GetConnectionString(string connectionString = "Default")
         {
-            ConsoleHelpers.DisplayAccountsDetails(currentUser);
+            string output = "";
 
-            AccountModel account = ConsoleHelpers.GetAccountSelection("Please select the desired account: ", currentUser);
+            var builder = new ConfigurationBuilder();
 
-            TransactionTypes type = TransactionTypes.Debit;
-            decimal amount = GetTransactionAmount(type, account);
+            var config = builder.SetBasePath(@"C:\Users\dscon\source\repos\Banking Sim App\BankConsoleUI").AddJsonFile("appsettings.json").Build();
 
-            TransactionModel transaction = new TransactionModel(type, amount);
-            transaction.DebitTransaction(account, amount);
+            output = config.GetConnectionString(connectionString);
 
-            transactions.Add(transaction);
+            return output;
         }
-
-        internal void PerformCreditTransaction(ClientModel currentUser)
+        private static void DisplayAllClients(SQLProcesses sql)
         {
-            ConsoleHelpers.DisplayAccountsDetails(currentUser);
+            var rows = sql.GetAllClients();
 
-            AccountModel account = ConsoleHelpers.GetAccountSelection("Please select the desired account: ", currentUser);
-
-            TransactionTypes type = TransactionTypes.Credit;
-            decimal amount = GetTransactionAmount(type, account);
-
-            TransactionModel transaction = new TransactionModel(type, amount);
-            transaction.CreditTransaction(account, amount);
-
-            transactions.Add(transaction);
-        }
-        internal void PerformTransferTransaction(ClientModel currentUser)
-        {
-            TransactionTypes transfer = TransactionTypes.Transfer;
-            bool isAccountConflict = false;
-            AccountModel toAccount, fromAccount;
-
-            do
+            foreach (var row in rows)
             {
-                ConsoleHelpers.DisplayAccountsDetails(currentUser);
-
-                toAccount = ConsoleHelpers.GetAccountSelection("Please select the account you would like to send money to: ", currentUser);
-
-                fromAccount = ConsoleHelpers.GetAccountSelection("Please select the account you would like to use to send money: ", currentUser);
-
-                if (toAccount == fromAccount)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("You selected the same account, please try again (press enter).");
-                    Console.ReadLine();
-
-                    isAccountConflict = true;
-                }
-                else
-                {
-                    isAccountConflict = false;
-                }
-            } while (isAccountConflict);
-
-            decimal amount = GetTransactionAmount(transfer, fromAccount);
-
-            TransactionModel transaction = new TransactionModel(transfer, toAccount, fromAccount, amount);
-            transaction.TransferTransaction(toAccount, fromAccount, amount);
-
-            transactions.Add(transaction);
+                Console.WriteLine($"{ row.Id }: { row.FirstName } { row.LastName }");
+            }
         }
     }
 }
