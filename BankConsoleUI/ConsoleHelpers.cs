@@ -244,28 +244,6 @@ namespace BankConsoleUI
 
             return output;
         }
-        public static string GetNameFromConsole(this string message)
-        {
-            string output = "";
-            bool isValidName = false;
-            do
-            {
-                string NameEntry = GetStringFromConsole(null);
-
-                if (string.IsNullOrWhiteSpace(NameEntry))
-                {
-                    Console.WriteLine("Cannot be blank. Try again.");
-                    Console.ReadLine();
-
-                    isValidName = false;
-                }
-                else
-                {
-                    isValidName = true;
-                }
-            } while (!isValidName);
-            return output;
-        }
         public static string GetEmailAddress()
         {
             bool isValidEntry = false;

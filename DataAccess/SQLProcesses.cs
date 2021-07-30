@@ -23,11 +23,11 @@ namespace DataAccessLibrary
 
             return db.LoadData<BasicClientModel, dynamic>(sql, new { }, _connectionString);
         }
-        public List<EmailAddressModel> GetEmailAddresses()
+        public EmailAddressModel GetEmailAddress(string emailAddress)
         {
-            string sql = "SELECT EmailAddress FROM dbo.Clients;";
+            string sql = "SELECT EmailAddress FROM dbo.Clients WHERE EmailAddress = @EmailAddress;";
 
-            return db.LoadData<EmailAddressModel, dynamic>(sql, new { }, _connectionString);
+            return db.LoadData<EmailAddressModel, dynamic>(sql, new { @EmailAddress = emailAddress }, _connectionString).FirstOrDefault();
         }
         public FullClientModel GetFullClientDetails(string emailAddress)
         {

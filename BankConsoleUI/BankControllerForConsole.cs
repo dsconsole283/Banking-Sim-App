@@ -44,7 +44,7 @@ namespace BankConsoleUI
                 {
                     case 1: // Log in
                         {
-                            currentUser = UserLogin();
+                            //currentUser = UserLogin();
 
                             Console.WriteLine("Login successful! Press enter to continue.");
                             Console.ReadLine();
@@ -55,10 +55,11 @@ namespace BankConsoleUI
                         }
                     case 2: // Sign up
                         {
-                            currentUser = RunSignUp();
+                            FullClientModel prospectiveClient = RunSignUp();
 
-                            SaveClientToDB(LoadClientInfoToDBModel(currentUser));
+                            SaveClientToDB(prospectiveClient);
 
+                            currentUser = LoadClientInfoToModel(prospectiveClient);
 
                             Console.WriteLine("Profile successfully created. Press enter to open account menu.");
                             Console.ReadLine();
@@ -76,9 +77,9 @@ namespace BankConsoleUI
             }
         }
 
-        private FullClientModel LoadClientInfoToDBModel(ClientModel currentUser)
+        private ClientModel LoadClientInfoToModel(FullClientModel currentUser)
         {
-            FullClientModel client = new FullClientModel
+            ClientModel client = new ClientModel
             {
                 EmailAddress = currentUser.EmailAddress,
                 SSN = currentUser.SSN,
@@ -94,43 +95,38 @@ namespace BankConsoleUI
         {
             sql.SaveClientInfoToDB(client);
         }
-        private ClientModel RunSignUp()
+        private FullClientModel RunSignUp()
         {
             Console.Clear();
 
             bool isUniqueEmail = false;
             string newEmail = "";
-            List<EmailAddressModel> emailAddresses = sql.GetEmailAddresses();
 
             do
             {
                 string emailEntry = ConsoleHelpers.GetEmailAddress();
+                EmailAddressModel emailAddress = sql.GetEmailAddress(emailEntry);
 
-                foreach (var emailAddress in emailAddresses)
+                if (emailAddress == null)
                 {
-                    if (emailEntry == emailAddress.EmailAddress)
-                    {
-                        Console.WriteLine("Email address already in use. Please try again.");
-                        Console.ReadLine();
+                    isUniqueEmail = true;
+                    newEmail = emailEntry;
+                }
+                else
+                {
+                    Console.WriteLine("Email address already in use. Please try again.");
+                    Console.ReadLine();
 
-                        isUniqueEmail = false;
-
-                        break;
-                    }
-                    else
-                    {
-                        isUniqueEmail = true;
-                        newEmail = emailEntry;
-                    }
+                    isUniqueEmail = false;
                 }
             } while (!isUniqueEmail);
 
-            string newFirstName = ConsoleHelpers.GetNameFromConsole("Please enter your first name: ");
-            string newLastName = ConsoleHelpers.GetNameFromConsole("Please enter your last name: ");
+            string newFirstName = ConsoleHelpers.GetStringFromConsole("Please enter your first name: ");
+            string newLastName = ConsoleHelpers.GetStringFromConsole("Please enter your last name: ");
             string newSSN = ConsoleHelpers.GetSSNFromUser("Please enter a 9 digit Social Security Number: ");
             string newBirthDate = ConsoleHelpers.GetBirthDateFromConsole();
 
-            ClientModel newClient = new ClientModel
+            FullClientModel newClient = new FullClientModel
             {
                 EmailAddress = newEmail,
                 FirstName = newFirstName,
@@ -170,38 +166,38 @@ namespace BankConsoleUI
             return newClient;
         }
 
-        private ClientModel UserLogin()
-        {
-            bool validPassword = false;
-            string emailEntry = ClientAuthentication.EmailAddressValidation(sql);
+//        private ClientModel UserLogin()
+//        {
+//            bool validPassword = false;
+//            string emailEntry = ClientAuthentication.EmailAddressValidation(sql);
 
-            FullClientModel dbDetails = sql.GetFullClientDetails(emailEntry);
+//            FullClientModel dbDetails = sql.GetFullClientDetails(emailEntry);
 
-            ClientModel user = new ClientModel
-            {
-                FirstName = dbDetails.FirstName,
-                LastName = dbDetails.LastName,
-                EmailAddress = emailEntry,
-                Password = dbDetails.Password,
-                SSN = dbDetails.SSN,
-            };
+//            ClientModel user = new ClientModel
+//            {
+//                FirstName = dbDetails.FirstName,
+//                LastName = dbDetails.LastName,
+//                EmailAddress = emailEntry,
+//                Password = dbDetails.Password,
+//                SSN = dbDetails.SSN,
+//            };
 
-            do
-            {
-                string passwordEntry = ConsoleHelpers.GetPasswordFromUser("Please enter your password: ");
+//            do
+//            {
+//                string passwordEntry = ConsoleHelpers.GetPasswordFromUser("Please enter your password: ");
 
-                if (passwordEntry == user.Password)
-                {
-                    validPassword = true;
-                }
-                else
-                {
-                    validPassword = false;
-                }
-            } while (!validPassword);
-;
-            return user;
-        }
+//                if (passwordEntry == user.Password)
+//                {
+//                    validPassword = true;
+//                }
+//                else
+//                {
+//                    validPassword = false;
+//                }
+//            } while (!validPassword);
+//;
+//            return user;
+//        }
         internal void RunAccountMenu(ClientModel currentUser)
         {
             Console.Clear();

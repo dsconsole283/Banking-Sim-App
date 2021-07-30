@@ -12,22 +12,7 @@ namespace BankConsoleUI
 {
     public class ClientAuthentication
     {
-        public static string EmailAddressValidation(SQLProcesses sql)
-        {
-            string output = "";
-
-            string emailEntry = ConsoleHelpers.GetEmailAddress();
-            List<EmailAddressModel> emailAddresses = sql.GetEmailAddresses();
-
-            foreach (var emailAddress in emailAddresses)
-            {
-                if (emailEntry == emailAddress.EmailAddress)
-                {
-                    output = emailEntry;
-                }
-            }
-            return output;
-        }
+        
 
         
     }
