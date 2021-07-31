@@ -10,7 +10,7 @@ namespace BankingLibrary
 
         public string EmailAddress { get; set; }
 
-        public int MaxAccounts = 5;
+        public static int MaxAccounts = 5;
         public string FirstName { get; set; }
         public string LastName { get; set; }
 

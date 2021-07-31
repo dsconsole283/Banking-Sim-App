@@ -44,7 +44,9 @@ namespace BankConsoleUI
                 {
                     case 1: // Log in
                         {
-                            //currentUser = UserLogin();
+                            FullClientModel validClient = UserLogin();
+
+                            currentUser = LoadClientInfoToModel(validClient);
 
                             Console.WriteLine("Login successful! Press enter to continue.");
                             Console.ReadLine();
@@ -99,27 +101,7 @@ namespace BankConsoleUI
         {
             Console.Clear();
 
-            bool isUniqueEmail = false;
-            string newEmail = "";
-
-            do
-            {
-                string emailEntry = ConsoleHelpers.GetEmailAddress();
-                EmailAddressModel emailAddress = sql.GetEmailAddress(emailEntry);
-
-                if (emailAddress == null)
-                {
-                    isUniqueEmail = true;
-                    newEmail = emailEntry;
-                }
-                else
-                {
-                    Console.WriteLine("Email address already in use. Please try again.");
-                    Console.ReadLine();
-
-                    isUniqueEmail = false;
-                }
-            } while (!isUniqueEmail);
+            string newEmail = ClientAuthentication.CheckEmailAvailability(sql);
 
             string newFirstName = ConsoleHelpers.GetStringFromConsole("Please enter your first name: ");
             string newLastName = ConsoleHelpers.GetStringFromConsole("Please enter your last name: ");
@@ -135,69 +117,24 @@ namespace BankConsoleUI
                 BirthDate = newBirthDate
             };
 
-            Console.WriteLine("User information accepted. Press enter to proceed.");
+            Console.WriteLine("User information accepted. Press enter to create a password.");
             Console.ReadLine();
 
-            bool isMatch = false;
-            do
-            {
-                string passwordEntry = ConsoleHelpers.GetPasswordFromUser("Please create a password. Password must be between 8 and 15 characters.: ");
-                Console.WriteLine();
+            Console.Clear();
 
-                string passwordConfirmation = ConsoleHelpers.GetPasswordFromUser("Please re-enter your password.: ");
-
-                if (passwordEntry != passwordConfirmation)
-                {
-                    Console.WriteLine("Passwords do not match. Please try again.");
-                    Console.ReadLine();
-
-                    isMatch = false;
-                }
-                else
-                {
-                    Console.WriteLine("Password created successfully.");
-
-                    newClient.Password = passwordEntry;
-
-                    isMatch = true;
-                }
-            } while (!isMatch);
+            ClientAuthentication.CreatePassword(newClient);
 
             return newClient;
         }
 
-//        private ClientModel UserLogin()
-//        {
-//            bool validPassword = false;
-//            string emailEntry = ClientAuthentication.EmailAddressValidation(sql);
+        private FullClientModel UserLogin()
+        {
+            string emailAddress = ClientAuthentication.EmailAddressValidation(sql);
 
-//            FullClientModel dbDetails = sql.GetFullClientDetails(emailEntry);
+            ClientAuthentication.LoginWithPassword(sql, emailAddress);
 
-//            ClientModel user = new ClientModel
-//            {
-//                FirstName = dbDetails.FirstName,
-//                LastName = dbDetails.LastName,
-//                EmailAddress = emailEntry,
-//                Password = dbDetails.Password,
-//                SSN = dbDetails.SSN,
-//            };
-
-//            do
-//            {
-//                string passwordEntry = ConsoleHelpers.GetPasswordFromUser("Please enter your password: ");
-
-//                if (passwordEntry == user.Password)
-//                {
-//                    validPassword = true;
-//                }
-//                else
-//                {
-//                    validPassword = false;
-//                }
-//            } while (!validPassword);
-//;
-//            return user;
-//        }
+            return sql.GetFullClientDetails(emailAddress);
+        }
         internal void RunAccountMenu(ClientModel currentUser)
         {
             Console.Clear();
@@ -284,40 +221,40 @@ namespace BankConsoleUI
 
             RunAccountMenu(currentUser);
         }
-        //internal void OpenAccount(ClientModel currentUser)
-        //{
-        //    Console.Clear();
+        internal void OpenAccount(ClientModel currentUser)
+        {
+            Console.Clear();
 
-        //    AccountTypes type;
+            AccountTypes type;
 
-        //    if (CanOpenNewAccount(currentUser))
-        //    {
-        //        type = GetDesiredAccountType();
+            if (currentUser.Accounts.Count < ClientModel.MaxAccounts)
+            {
+                type = GetDesiredAccountType();
 
-        //        decimal amount = GetInitialDeposit(type);
+                decimal amount = GetInitialDeposit(type);
 
-        //        if (type == AccountTypes.Checking)
-        //        {
-        //            TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
-        //            transaction.OpenCheckingAccount(currentUser, amount);
-        //            transactions.Add(transaction);
-        //        }
-        //        else if (type == AccountTypes.Savings)
-        //        {
-        //            TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
-        //            transaction.OpenSavingsAccount(currentUser, amount);
-        //            transactions.Add(transaction);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine();
-        //        Console.WriteLine("Maximum number of accounts reached, please try closing an account before opening a new one (press enter to continue).");
-        //        Console.ReadLine();
+                if (type == AccountTypes.Checking)
+                {
+                    TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
+                    transaction.OpenCheckingAccount(currentUser, amount);
+                    transactions.Add(transaction);
+                }
+                else if (type == AccountTypes.Savings)
+                {
+                    TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
+                    transaction.OpenSavingsAccount(currentUser, amount);
+                    transactions.Add(transaction);
+                }
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Maximum number of accounts reached, please try closing an account before opening a new one (press enter to continue).");
+                Console.ReadLine();
 
-        //        RunAccountMenu(currentUser);
-        //    }
-        //}
+                RunAccountMenu(currentUser);
+            }
+        }
         internal decimal GetInitialDeposit(AccountTypes type)
         {
             decimal amount = 0.00M;

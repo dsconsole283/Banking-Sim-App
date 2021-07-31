@@ -45,5 +45,11 @@ namespace DataAccessLibrary
 
             db.SaveData(sql, new { client.EmailAddress, client.SSN, client.FirstName, client.LastName, client.BirthDate, client.Password }, _connectionString);
         }
+        public string GetPasswordViaEmail(string emailAddress)
+        {
+            string sql = "SELECT Password FROM dbo.Clients WHERE EmailAddress = @EmailAddress;";
+
+            return db.LoadData<string, dynamic>(sql, new { EmailAddress = emailAddress }, _connectionString).FirstOrDefault();
+        }
     }
 }

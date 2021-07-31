@@ -97,7 +97,7 @@ namespace BankConsoleUI
 
             return output;
         }
-        internal static string GetPasswordFromUser(this string message)
+        internal static string GetInitialPasswordFromUser(this string message)
         {
             string output = "";
             bool isValidPassword = false;
