@@ -51,5 +51,11 @@ namespace DataAccessLibrary
 
             return db.LoadData<string, dynamic>(sql, new { EmailAddress = emailAddress }, _connectionString).FirstOrDefault();
         }
+        public List<AccountModel> GetClientAccountsByEmail(string emailAddress)
+        {
+            string sql = "SELECT * FROM dbo.Accounts INNER JOIN dbo.ClientAccounts ON dbo.Accounts.Id = dbo.ClientAccounts.AccountId WHERE dbo.ClientAccounts.ClientEmail = @EmailAddress;";
+
+            return db.LoadData<AccountModel, dynamic>(sql, new { EmailAddress = emailAddress }, _connectionString);
+        }
     }
 }

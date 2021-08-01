@@ -7,11 +7,6 @@ namespace BankingLibrary
 {
     public class Enums
     {
-        public enum AccountTypes
-        {
-            Checking,
-            Savings
-        }
         public enum TransactionTypes
         {
             Debit,

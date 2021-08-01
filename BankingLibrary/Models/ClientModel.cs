@@ -6,7 +6,7 @@ namespace BankingLibrary
 {
     public class ClientModel
     {
-        public List<AccountModel> Accounts { get; set; } = new List<AccountModel>();
+        public List<AccountModel> Accounts { get; set; }
 
         public string EmailAddress { get; set; }
 
@@ -17,13 +17,7 @@ namespace BankingLibrary
         public static int MinimumPasswordLength = 8;
         public static int MaximumPasswordLength = 15;
 
-        private string _ssn;
-
-        public string SSN // 012457890
-        {
-            get { return $"XXX-XX-{_ssn.Substring(5, 4) }"; }
-            set { _ssn = value; }
-        }
+        public string SSN { get; set; }
 
         public string Password { get; set; }
         public string BirthDate { get; set; }
