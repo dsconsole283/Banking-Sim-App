@@ -32,7 +32,7 @@ namespace BankingLibrary
             TransactionType = transactionType;
             Amount = amount;
         }
-        private string GenerateTransactionNumber(AccountModel account)
+        public static string GenerateTransactionNumber(AccountModel account)
         {
             return $"{ account.AccountNumber }" +
                 $"{ DateTime.Now.Month.ToString() }" +
@@ -67,32 +67,5 @@ namespace BankingLibrary
             DebitTransaction(fromAccount, amount);
             CreditTransaction(toAccount, amount);
         }
-        //public void OpenSavingsAccount(ClientModel client, decimal initialDeposit)
-        //{
-        //    SavingsAccount savings = new SavingsAccount(initialDeposit);
-
-        //    TransactionNumber = GenerateTransactionNumber(savings);
-        //    Amount = initialDeposit;
-        //    TransactionType = TransactionTypes.NewAccount;
-
-        //    client.Accounts.Add(savings);
-
-        //    Console.WriteLine();
-        //    Console.WriteLine($"{ savings.AccountType }({ savings.AccountNumber }) Account created successfully. Balance: ${ savings.Balance }");
-        //}
-
-        //public void OpenCheckingAccount(ClientModel client, decimal initialDeposit)
-        //{
-        //    CheckingAccount checking = new CheckingAccount(initialDeposit);
-
-        //    TransactionNumber = GenerateTransactionNumber(checking);
-        //    Amount = initialDeposit;
-        //    TransactionType = TransactionTypes.NewAccount;
-
-        //    client.Accounts.Add(checking);
-
-        //    Console.WriteLine();
-        //    Console.WriteLine($"{ checking.AccountType }({ checking.AccountNumber }) Account created successfully. Balance: ${ checking.Balance }");
-        //}
     }
 }

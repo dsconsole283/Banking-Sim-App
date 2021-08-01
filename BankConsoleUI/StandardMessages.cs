@@ -54,16 +54,16 @@ namespace BankConsoleUI
             Console.WriteLine();
         }
 
-        //public static void AccountTypeMenu()
-        //{
-        //    Console.WriteLine();
-        //    Console.WriteLine("Which type of account would you like to open?");
-        //    Console.WriteLine();
-        //    Console.WriteLine($"1. Checking (${ CheckingAccount.MinimumDeposit } minimum deposit)");
-        //    Console.WriteLine();
-        //    Console.WriteLine($"2. Savings (${ SavingsAccount.MinimumDeposit } minimum deposit)");
-        //    Console.WriteLine();
-        //}
+        public static void AccountTypeMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Which type of account would you like to open?");
+            Console.WriteLine();
+            Console.WriteLine("1. Checking");
+            Console.WriteLine();
+            Console.WriteLine("2. Savings");
+            Console.WriteLine();
+        }
 
         public static void TransactionMenu()
         {

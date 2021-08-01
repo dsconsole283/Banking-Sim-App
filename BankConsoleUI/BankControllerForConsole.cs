@@ -12,7 +12,6 @@ namespace BankConsoleUI
     public class BankControllerForConsole
     {
         public ClientModel currentUser;
-        public List<TransactionModel> transactions = new List<TransactionModel>();
         private readonly SQLProcesses sql = new SQLProcesses(GetConnectionString());
         internal void RunMainMenu()
         {
@@ -183,6 +182,8 @@ namespace BankConsoleUI
                         }
                     case 2: /// TODO Build open accounts
                         {
+                            OpenAccount(currentUser);
+
                             ReturnToAccountMenu(currentUser);
 
                             break;
@@ -262,110 +263,132 @@ namespace BankConsoleUI
 
             RunAccountMenu(currentUser);
         }
-        //internal void OpenAccount(ClientModel currentUser)
-        //{
-        //    Console.Clear();
+        internal void OpenAccount(ClientModel currentUser)
+        {
+            Console.Clear();
 
-        //    AccountTypes type;
+            if (currentUser.Accounts.Count < ClientModel.MaxAccounts)
+            {
+                string accountType = GetDesiredAccountType();
 
-        //    if (currentUser.Accounts.Count < ClientModel.MaxAccounts)
-        //    {
-        //        type = GetDesiredAccountType();
+                decimal amount = GetInitialDeposit();
 
-        //        decimal amount = GetInitialDeposit(type);
+                BankingLibrary.AccountModel account = new BankingLibrary.AccountModel
+                {
+                    AccountNumber = BankingLibrary.AccountModel.GenerateAccountNumber(),
+                    AccountType = accountType,
+                    Balance = amount
+                };
 
-        //        if (type == AccountTypes.Checking)
-        //        {
-        //            TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
-        //            transaction.OpenCheckingAccount(currentUser, amount);
-        //            transactions.Add(transaction);
-        //        }
-        //        else if (type == AccountTypes.Savings)
-        //        {
-        //            TransactionModel transaction = new TransactionModel(TransactionTypes.NewAccount, amount);
-        //            transaction.OpenSavingsAccount(currentUser, amount);
-        //            transactions.Add(transaction);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine();
-        //        Console.WriteLine("Maximum number of accounts reached, please try closing an account before opening a new one (press enter to continue).");
-        //        Console.ReadLine();
+                TransactionModel log = new TransactionModel(TransactionTypes.NewAccount, account, amount)
+                {
+                    TransactionNumber = TransactionModel.GenerateTransactionNumber(account)
+                };
 
-        //        RunAccountMenu(currentUser);
-        //    }
-        //}
-        //internal decimal GetInitialDeposit(AccountTypes type)
-        //{
-        //    decimal amount = 0.00M;
-        //    bool isValid = false;
-        //    decimal minimumDeposit = 0.00M;
+                DataAccessLibrary.Models.AccountModel formattedAccount = LoadAccountToDbModel(account);
 
-        //    do
-        //    {
-        //        amount = ConsoleHelpers.GetDecimalFromConsole("How much would you like to initially deposit?: ");
+                sql.SaveNewAccount(formattedAccount);
 
-        //        if (type == AccountTypes.Checking)
-        //        {
-        //            minimumDeposit = CheckingAccount.MinimumDeposit;
-        //        }
-        //        else if (type == AccountTypes.Savings)
-        //        {
-        //            minimumDeposit = SavingsAccount.MinimumDeposit;
-        //        }
+                int accountId = sql.GetAccountId(formattedAccount);
 
-        //        if (amount < minimumDeposit)
-        //        {
-        //            Console.WriteLine();
-        //            Console.WriteLine("Deposit amount does not meet minimum requirements, please try a larger amount.");
-        //            Console.WriteLine();
+                DataAccessLibrary.Models.TransactionLogModel formattedTransaction = LoadTransactionToDbModel(log, currentUser, accountId);
 
-        //            isValid = false;
-        //        }
-        //        else
-        //        {
-        //            isValid = true;
-        //        }
+                sql.SaveNewAccountLink(currentUser.EmailAddress, accountId);
+                sql.SaveNewAccountTransaction(formattedTransaction);
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Maximum number of accounts reached, please try closing an account before opening a new one (press enter to continue).");
+                Console.ReadLine();
 
-        //    } while (!isValid);
-        //    return amount;
-        //}
-        //internal AccountTypes GetDesiredAccountType()
-        //{
-        //    AccountTypes type;
-        //    bool isValidSelection = false;
+                RunAccountMenu(currentUser);
+            }
+        }
 
-        //    do
-        //    {
-        //        StandardMessages.AccountTypeMenu();
-        //        int selection = ConsoleHelpers.GetIntFromConsole(StandardMessages.EnterSelection());
+        private TransactionLogModel LoadTransactionToDbModel(TransactionModel log, ClientModel client, int accountId)
+        {
+            TransactionLogModel output = new TransactionLogModel
+            {
+                TransactionNumber = log.TransactionNumber,
+                ClientEmail = client.EmailAddress,
+                ToAccountId = accountId,
+                TransactionAmount = log.Amount,
+                TransactionType = "New Account"
+            };
+            return output;
+        }
 
-        //        if (selection == 1)
-        //        {
-        //            type = AccountTypes.Checking;
+        private DataAccessLibrary.Models.AccountModel LoadAccountToDbModel(BankingLibrary.AccountModel account)
+        {
+            DataAccessLibrary.Models.AccountModel output = new DataAccessLibrary.Models.AccountModel
+            {
+                AccountNumber = account.AccountNumber,
+                AccountType = account.AccountType,
+                Balance = account.Balance
+            };
+            return output;
+        }
 
-        //            isValidSelection = true;
-        //        }
-        //        else if (selection == 2)
-        //        {
-        //            type = AccountTypes.Savings;
+        internal decimal GetInitialDeposit()
+        {
+            decimal amount = 0.00M;
+            bool isValid = false;
 
-        //            isValidSelection = true;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine();
-        //            Console.WriteLine("Invalid selection, please try again.");
-        //            Console.WriteLine();
-        //            type = AccountTypes.Checking;
+            do
+            {
+                amount = ConsoleHelpers.GetDecimalFromConsole($"Minimum deposit = { BankingLibrary.AccountModel.MinimumDeposit }\r\nHow much would you like to initially deposit?: ");
 
-        //            isValidSelection = false;
-        //        }
-        //    } while (!isValidSelection);
+                if (amount < BankingLibrary.AccountModel.MinimumDeposit)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Deposit amount does not meet minimum requirements, please try a larger amount.");
+                    Console.WriteLine();
 
-        //    return type;
-        //}
+                    isValid = false;
+                }
+                else
+                {
+                    isValid = true;
+                }
+
+            } while (!isValid);
+            return amount;
+        }
+        internal string GetDesiredAccountType()
+        {
+            string type = "";
+            bool isValidSelection = false;
+
+            do
+            {
+                StandardMessages.AccountTypeMenu();
+                int selection = ConsoleHelpers.GetIntFromConsole(StandardMessages.EnterSelection());
+
+                if (selection == 1)
+                {
+                    type = "Checking";
+
+                    isValidSelection = true;
+                }
+                else if (selection == 2)
+                {
+                    type = "Savings";
+
+                    isValidSelection = true;
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Invalid selection, please try again.");
+                    Console.WriteLine();
+
+                    isValidSelection = false;
+                }
+            } while (!isValidSelection);
+
+            return type;
+        }
         internal decimal GetTransactionAmount(TransactionTypes type, BankingLibrary.AccountModel account)
         {
             decimal amount = 0.00M;

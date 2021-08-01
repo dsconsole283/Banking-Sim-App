@@ -57,5 +57,29 @@ namespace DataAccessLibrary
 
             return db.LoadData<AccountModel, dynamic>(sql, new { EmailAddress = emailAddress }, _connectionString);
         }
+        public void SaveNewAccount(AccountModel newAccount)
+        {
+            string sql = "INSERT INTO dbo.Accounts (AccountNumber, AccountType, Balance) VALUES (@AccountNumber, @AccountType, @Balance);";
+
+            db.SaveData(sql, new { newAccount.AccountNumber, newAccount.AccountType, newAccount.Balance }, _connectionString);
+        }
+        public void SaveNewAccountTransaction(TransactionLogModel transaction)
+        {
+            string sql = "INSERT INTO dbo.Logs (TransactionNumber, ClientEmail, ToAccountId, TransactionAmount, TransactionType) VALUES (@TransactionNumber, @ClientEmail, @ToAccountId, @TransactionAmount, @TransactionType);";
+
+            db.SaveData(sql, new { transaction.TransactionNumber, transaction.ClientEmail, transaction.ToAccountId, transaction.TransactionAmount, @TransactionType = "NewAccount" }, _connectionString);
+        }
+        public int GetAccountId(AccountModel account)
+        {
+            string sql = "SELECT Id FROM dbo.Accounts WHERE AccountNumber = @AccountNumber;";
+
+            return db.LoadData<int, dynamic>(sql, new { account.AccountNumber }, _connectionString).First();
+        }
+        public void SaveNewAccountLink(string emailAddress, int Id)
+        {
+            string sql = "INSERT INTO dbo.ClientAccounts (ClientEmail, AccountId) VALUES (@EmailAddress, @AccountId);";
+
+            db.SaveData(sql, new { @EmailAddress = emailAddress, @AccountId = Id }, _connectionString);
+        }
     }
 }

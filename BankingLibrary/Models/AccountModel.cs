@@ -13,9 +13,9 @@ namespace BankingLibrary
 
         public decimal MinimumBalance = 0;
         public decimal Balance { get; set; }
-        public static decimal MinimumDeposit { get; set; }
+        public static decimal MinimumDeposit = 100.00M;
 
-        public virtual string GenerateAccountNumber()
+        public static string GenerateAccountNumber()
         {
             string output = "";
 
