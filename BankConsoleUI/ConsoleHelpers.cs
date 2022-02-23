@@ -1,10 +1,12 @@
 ﻿using BankingLibrary;
+using DataAccessLibrary;
+using DataAccessLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace NADBankConsoleUI
+namespace BankConsoleUI
 {
     public static class ConsoleHelpers
     {
@@ -37,7 +39,6 @@ namespace NADBankConsoleUI
 
             return output;
         }
-
         internal static int GetIntFromConsole(this string message)
         {
             bool isValidEntry = false;
@@ -96,7 +97,7 @@ namespace NADBankConsoleUI
 
             return output;
         }
-        internal static string GetPasswordFromUser(this string message, ClientModel client)
+        internal static string GetInitialPasswordFromUser(this string message)
         {
             string output = "";
             bool isValidPassword = false;
@@ -104,10 +105,10 @@ namespace NADBankConsoleUI
             do
             {
                 Console.WriteLine();
-                Console.WriteLine(message);
+                Console.Write(message);
                 string input = Console.ReadLine();
 
-                if (input.Length < client.MinimumPasswordLength || string.IsNullOrWhiteSpace(input))
+                if (input.Length > ClientModel.MaximumPasswordLength || input.Length < ClientModel.MinimumPasswordLength || string.IsNullOrWhiteSpace(input))
                 {
                     Console.WriteLine();
                     Console.WriteLine("Invalid entry, please try again.");
@@ -123,6 +124,93 @@ namespace NADBankConsoleUI
 
             return output;
         }
+
+        internal static string GetBirthDateFromConsole()
+        {
+            string output;
+            string month = "";
+            string day = "";
+            string year = "";
+            int monthEntry;
+
+            bool isValidMonth = false;
+            do
+            {
+                monthEntry = GetIntFromConsole("Please enter your birth month (MM): ");
+
+                if (monthEntry < 01 || monthEntry > 12)
+                {
+                    Console.WriteLine("Invalid month selection, try again.");
+                    Console.ReadLine();
+
+                    isValidMonth = false;
+                }
+                else
+                {
+                    isValidMonth = true;
+                    month = monthEntry.ToString();
+                }
+            } while (!isValidMonth);
+
+            bool isValidDay = false;
+            do
+            {
+                int dayEntry = GetIntFromConsole("Please enter the day of the month on which you were born (DD): ");
+
+                if ((monthEntry == 01 || monthEntry == 03 || monthEntry == 05 || monthEntry == 07 || monthEntry == 10 || monthEntry == 12) && (dayEntry < 01 || dayEntry > 31))
+                {
+                    Console.WriteLine("Invalid day selection, try again.");
+                    Console.ReadLine();
+
+                    isValidDay = false;
+                }
+                else if ((monthEntry == 04 || monthEntry == 06 || monthEntry == 09 || monthEntry == 11) && (dayEntry < 01 || dayEntry > 30))
+                {
+                    Console.WriteLine("Invalid day selection, try again.");
+                    Console.ReadLine();
+
+                    isValidDay = false;
+                }
+                else if (monthEntry == 02 && (dayEntry < 0 || dayEntry > 29))
+                {
+                    Console.WriteLine("Invalid day selection, try again.");
+                    Console.ReadLine();
+
+                    isValidDay = false;
+                }
+                else
+                {
+                    day = dayEntry.ToString();
+                    isValidDay = true;
+                }
+            } while (!isValidDay);
+
+            bool isValidYear = false;
+            do
+            {
+                int yearEntry = GetIntFromConsole("Please enter your birth year (YYYY): ");
+
+                if (yearEntry + 18 > (int)DateTime.Now.Year)
+                {
+                    Console.WriteLine("Must be 18 or older to sign up. Please go away little kid.");
+                    isValidYear = false;
+                }
+                else if (yearEntry < 1900)
+                {
+                    Console.WriteLine("Invalid year, try again.");
+                    isValidYear = false;
+                }
+                else
+                {
+                    year = yearEntry.ToString();
+                    isValidYear = true;
+                }
+            } while (!isValidYear);
+
+            output = $"{ month }-{ day }-{ year }";
+            return output;
+        }
+
         public static string GetSSNFromUser(this string message)
         {
             string output = "";
@@ -156,124 +244,28 @@ namespace NADBankConsoleUI
 
             return output;
         }
-
-        internal static void GetUserInfo(ClientModel currentUser)
+        public static string GetEmailAddress()
         {
-            currentUser.FirstName = GetStringFromConsole("Please enter your first name: ");
-            Console.WriteLine();
-
-            currentUser.LastName = GetStringFromConsole("Please enter your last name: ");
-            Console.WriteLine();
-
-            currentUser.SSN = GetSSNFromUser("Please enter your 9-digit Social Security Number: ");
-            Console.WriteLine();
-        }
-
-        internal static void UpdatePersonalInfo(ClientModel currentUser)
-        {
-            Console.Clear();
-
-            Console.WriteLine("Please enter your personal information below to update your profile.");
-
-            GetUserInfo(currentUser);
-        }
-
-        internal static void GetInitialPersonalInfo(ClientModel client)
-        {
-            Console.Clear();
-
-            Console.WriteLine("WELCOME to NICK'S A DEMOCRAT BANK!!");
-            Console.WriteLine();
-
-            Console.WriteLine("Please enter your personal information below. Once completed, you will be able to open new accounts. Thank you!");
-            Console.WriteLine();
-            Console.WriteLine();
-
-            GetUserInfo(client);
-        }
-
-        public static void DisplayUserInformation(ClientModel currentUser)
-        {
-            Console.Clear();
-
-            Console.WriteLine("Current Information On File");
-            Console.WriteLine();
-
-            Console.WriteLine($"FIRST NAME:  { currentUser.FirstName.ToUpper() }");
-            Console.WriteLine();
-
-            Console.WriteLine($"LAST NAME:  { currentUser.LastName.ToUpper() }");
-            Console.WriteLine();
-
-            Console.WriteLine($"SOCIAL SECURITY NUMBER:  { currentUser.SSN }");
-            Console.WriteLine();
-        }
-
-        public static void DisplayAccountsDetails(ClientModel currentUser)
-        {
-            Console.Clear();
-
-            Console.WriteLine();
-
-            if (currentUser.Accounts.Count == 0)
-            {
-                Console.WriteLine();
-                Console.WriteLine("You do not have any account information to display");
-            }
-            else
-            {
-                int i = 0;
-
-                foreach (var account in currentUser.Accounts)
-                {
-                    Console.WriteLine($"{ i + 1 }. { account.AccountType } ({ account.AccountNumber }): ${ account.Balance }");
-                    i++;
-                }
-            }
-        }
-        public static void DisplayTransactionLog(List<TransactionModel> transactions)
-        {
-            Console.Clear();
-
-            Console.WriteLine("   Transactions");
-            Console.WriteLine();
-
-            foreach (var transaction in transactions)
-            {
-
-                Console.WriteLine($"{ transaction.TransactionNumber.ToString() }  |  { transaction.TransactionType.ToString() }  |  { transaction.Amount }");
-
-            }
-        }
-        internal static AccountModel GetAccountSelection(this string message, ClientModel currentUser)
-        {
-            int selection;
-            bool isValidSelection = false;
-            AccountModel account;
-
+            bool isValidEntry = false;
+            string output = "";
             do
             {
-                Console.WriteLine();
-                Console.WriteLine(message);
-                selection = ConsoleHelpers.GetIntFromConsole(null);
+                Console.Clear();
 
-                if (selection < 1 || selection > currentUser.Accounts.Count)
+                string input = GetStringFromConsole("Please enter your email address: ");
+                if (string.IsNullOrWhiteSpace(input))
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("Invalid selection, please try again.");
-
-                    isValidSelection = false;
+                    isValidEntry = false;
                 }
                 else
                 {
-                    isValidSelection = true;
+                    output = input;
+
+                    isValidEntry = true;
                 }
+            } while (!isValidEntry);
 
-            } while (!isValidSelection);
-
-            account = currentUser.Accounts[selection - 1];
-
-            return account;
+            return output;
         }
     }
 }

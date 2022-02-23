@@ -3,94 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace NADBankConsoleUI
+namespace BankConsoleUI
 {
     public static class StandardMessages
     {
         public static void Logo()
         {
-            Console.WriteLine("                                     F                                                                                                     ");
-            Console.WriteLine("                                    F;F      F                                                                                             ");
-            Console.WriteLine("                                   F;;;F   F;;F                                                                                            ");
-            Console.WriteLine("                                   F;;;F  F;;;;F                                                                                           ");
-            Console.WriteLine("                                   F;;;;;;;;;;;F                                                                                           ");
-            Console.WriteLine("                                    F;;;;;;;;;;;;FFF                   FFFFFFFFFFFFFFFF                                                    ");
-            Console.WriteLine("                                    F;;;;;;;;;;;;;;;FFF           FFFF;;;;;;;;;;;;;;;;;;;;;F                                               ");
-            Console.WriteLine("                                  F;;;;;;;;;;;;;;;;;;;;FF       F;;;;;;;;;;;;;;;;;;;;;;;;;;;;;F                                            ");
-            Console.WriteLine("                                 F;;;;;;;;;;;;;;;;;;;;;;;FFFFFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;F                                         ");
-            Console.WriteLine("                                 F;;;;;;;FFFF;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;F                                       ");
-            Console.WriteLine("                               F;;;;;;;;F     F;;;;;;;;;;;;;;A;;;;;;;A;;;;;;;;A;;;;;;;A;;;;;;;;;;;;;F                                      ");
-            Console.WriteLine("                              F;;;;;;;;F       F;;;;;;;;;;;AAAAA;;;AAAAA;;;;AAAAA;;;AAAAA;;;;;;;;;;;;F                                     ");
-            Console.WriteLine("                             F;;;;;;;F          F;;;;;;;;;;;A;A;;;;;A;A;;;;;;A;A;;;;;A;A;;;;;;;;;;;;;F                                     ");
-            Console.WriteLine("                             FFFFFF             F;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;F                                     ");
-            Console.WriteLine("                                                 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF                                     ");
-            Console.WriteLine("                                                  GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG                                     ");
-            Console.WriteLine("                                                   G:::::::::GGGGGGGGGGGGGGGGGGGG::::::::::::::::::G::::G                                  ");
-            Console.WriteLine("                                                   G::::::::G                    G:::::::::::G:::::G:::G::G                                ");
-            Console.WriteLine("                                                   G:::::::G                      G::::::::G   G::::G    G::G                              ");
-            Console.WriteLine("                                                  G::::::G                          G:::::::G   G::::G     G:G                             ");
-            Console.WriteLine("                                                  G::::::G                         G:::::::G     G:::::G     G                             ");
-            Console.WriteLine("                                                 G::::::::G                      G:::::::G      G::::::G                                   ");
-            Console.WriteLine("                                               G:::::::::::G                   G:::::::G       G::::::G                                    ");
-            Console.WriteLine("                                              G:::::::G:::G                  G:::::::G        G::::::G                                     ");
-            Console.WriteLine("                                             G:::::::G GG                  G:::::::G        G::::::G                                       ");
-            Console.WriteLine("                                             GGGGGGGG                        GGGGG         G::::::G                                        ");
-            Console.WriteLine("                                                                          GGGGG                                          ");
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("       NNNNNNN         NNNNNN   NNNNNNN                   NNNNNNN   NNNNNN     NNNNNN   NNNNNN              NNNNNN              ");
-            Console.WriteLine("       NNNNNNNN        NNNNNN   NNNNNNN             NNNNNNNNNNNNN   NNNNNN    NNNNNN    NNNNNN         NNNNNNNNNNNNNNNNN        ");
-            Console.WriteLine("       NNNNNNNNN       NNNNNN   NNNNNNN           NNNNNNNNNNNNNNN   NNNNNN   NNNNNN      NNNNN     NNNNNNNNNNNNNNNNNNNNNNNN     ");
-            Console.WriteLine("       NNNNNNNNNN      NNNNNN   NNNNNNN        NNNNNNN              NNNNNN  NNNNNN         NNN     NNNNNNNNNN     NNNNNNNNN     ");
-            Console.WriteLine("       NNNNNNNNNNN     NNNNNN   NNNNNNN       NNNNNNN               NNNNNN NNNNNN       N   NN     NNNNNNNNNNN                  ");
-            Console.WriteLine("       NNNNNNNNNNNN    NNNNNN   NNNNNNN      NNNNNNN                NNNNNNNNNNNN          NNNN       NNNNNNNNNN                 ");
-            Console.WriteLine("       NNNNNNNNNNNNN   NNNNNN   NNNNNNN     NNNNNNN                 NNNNNNNNNNN                        NNNNNNNNNNNNNNNN         ");
-            Console.WriteLine("       NNNNNNNNNNNNNN  NNNNNN   NNNNNNN    NNNNNNN                  NNNNNNNNNN                              NNNNNNNNNNNNN       ");
-            Console.WriteLine("       NNNNNNNNNNNNNNN NNNNNN   NNNNNNN   NNNNNNN                   NNNNNNNNN                                    NNNNNNNNNN     ");
-            Console.WriteLine("       NNNNNNNNNNNNNNNNNNNNNN   NNNNNNN   NNNNNNN                   NNNNNNNN                                       NNNNNNNNNN   ");
-            Console.WriteLine("       NNNNNNNNNNNNNNNNNNNNNN   NNNNNNN   NNNNNNN                   NNNNNNNNN                                       NNNNNNNNNN  ");
-            Console.WriteLine("       NNNNNN  NNNNNNNNNNNNNN   NNNNNNN   NNNNNNN                   NNNNNNNNNN                                       NNNNNNNNNN ");
-            Console.WriteLine("       NNNNNN   NNNNNNNNNNNNN   NNNNNNN    NNNNNNN                  NNNNNNNNNNN                                       NNNNNNNNN ");
-            Console.WriteLine("       NNNNNN    NNNNNNNNNNNN   NNNNNNN     NNNNNNN                 NNNNNNNNNNNN                                     NNNNNNNNNN ");
-            Console.WriteLine("       NNNNNN     NNNNNNNNNNN   NNNNNNN      NNNNNNN                NNNNNN NNNNNN                  NNNNNNNNNN      NNNNNNNNNNN  ");
-            Console.WriteLine("       NNNNNN      NNNNNNNNNN   NNNNNNN        NNNNNNN              NNNNNN  NNNNNN                 NNNNNNNNNN     NNNNNNNNNNN   ");
-            Console.WriteLine("       NNNNNN       NNNNNNNNN   NNNNNNN           NNNNNNNNNNNNNNN   NNNNNN   NNNNNN                NNNNNNNNNNNNNNNNNNNNNNNN     ");
-            Console.WriteLine("       NNNNNN        NNNNNNNN   NNNNNNN             NNNNNNNNNNNNN   NNNNNN    NNNNNN                   NNNNNNNNNNNNNNNNN        ");
-            Console.WriteLine("       NNNNNN         NNNNNNN   NNNNNNN                   NNNNNNN   NNNNNN     NNNNNN                       NNNNNN              ");
-            Console.WriteLine("");
-            Console.WriteLine("                                                              AAAAAAAA                                                            ");
-            Console.WriteLine("                                                           AAAAAAAAAAAAAA                                                         ");
-            Console.WriteLine("                                                         AAAAAAAAAAAAAAAAAA                                                       ");
-            Console.WriteLine("                                                        AAAAAAAAAAAAAAAAAAAA                                                      ");
-            Console.WriteLine("                                                       AAAAAAAAA    AAAAAAAAA                                                     ");
-            Console.WriteLine("                                                      AAAAAAAA        AAAAAAAA                                                    ");
-            Console.WriteLine("                                                     AAAAAAAA          AAAAAAAA                                                   ");
-            Console.WriteLine("                                                    AAAAAAAAAAAAAAAAAAAAAAAAAAAA                                                  ");
-            Console.WriteLine("                                                   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA                                                 ");
-            Console.WriteLine("                                                  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA                                                ");
-            Console.WriteLine("                                                 AAAAAAAA                  AAAAAAAA                                               ");
-            Console.WriteLine("                                                AAAAAAAA                    AAAAAAAA                                              ");
-            Console.WriteLine("                                               AAAAAAAA                      AAAAAAAA                                             ");
-            Console.WriteLine("                                              AAAAAAAA                        AAAAAAAA                                            ");
-            Console.WriteLine("                                             AAAAAAAA                          AAAAAAAA                                           ");
-            Console.WriteLine("");
-            Console.WriteLine("DDDDDDDDDD           EEEEEEEEEEEEE  MMMMM        MMMMM       OOOOOOOO            CCCCCCCCC  RRRRRRRRRRR          AAAAAAAA     TTTTTTTTTTTTTTTTTT");
-            Console.WriteLine("DDDDDDDDDDDD         EEEEEEEEEEEEE  MMMMMM      MMMMMM     OOOOOOOOOOOO        CCCCCCCCCCC  RRRRRRRRRRRRRR      AAAA  AAAA    TTTTTTTTTTTTTTTTTT");
-            Console.WriteLine("DDDDDDDDDDDDDDD      EEEE           MMMMMMM    MMMMMMM    OOOO      OOOO      CCCCCC        RRRR       RRRR    AAAA    AAAA          TTTT");
-            Console.WriteLine("DDDD      DDDDDD     EEEE           MMMMMMMM  MMMMMMMM   OOOO        OOOO    CCCCC          RRRR        RRRR  AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDD       DDDDDD    EEEE           MMMM MMMMMMMM MMMM  OOOO          OOOO  CCCC            RRRR        RRRR  AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDD        DDDDDD   EEEE           MMMM  MMMMMM  MMMM  OOOO          OOOO  CCCC            RRRR       RRRR   AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDD         DDDDDD  EEEE           MMMM   MMMM   MMMM  OOOO          OOOO  CCCC            RRRRRRRRRRRRRR    AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDD         DDDDDD  EEEEEEEEEEE    MMMM          MMMM  OOOO          OOOO  CCCC            RRRRRRRRRRR       AAAAAAAAAAAAAA         TTTT");
-            Console.WriteLine("DDDD         DDDDDD  EEEEEEEEEEE    MMMM          MMMM  OOOO          OOOO  CCCC            RRRRRRRRR         AAAAAAAAAAAAAA         TTTT");
-            Console.WriteLine("DDDD         DDDDDD  EEEE           MMMM          MMMM  OOOO          OOOO  CCCC            RRRR  RRRR        AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDD        DDDDDD   EEEE           MMMM          MMMM  OOOO          OOOO  CCCC            RRRR   RRRR       AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDD       DDDDDD    EEEE           MMMM          MMMM  OOOO          OOOO  CCCC            RRRR    RRRR      AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDD      DDDDDD     EEEE           MMMM          MMMM   OOOO        OOOO    CCCCC          RRRR     RRRR     AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDDDDDDDDDDDDD      EEEE           MMMM          MMMM    OOOO      OOOO      CCCCCC        RRRR      RRRR    AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDDDDDDDDDD         EEEEEEEEEEEEE  MMMM          MMMM     OOOOOOOOOOOO        CCCCCCCCCCC  RRRR       RRRR   AAAA      AAAA         TTTT");
-            Console.WriteLine("DDDDDDDDDD           EEEEEEEEEEEEE  MMMM          MMMM       OOOOOOOO            CCCCCCCCC  RRRR        RRRR  AAAA      AAAA         TTTT");
+            Console.WriteLine("Add Logo");
         }
 
         internal static string EnterSelection()
@@ -140,9 +59,9 @@ namespace NADBankConsoleUI
             Console.WriteLine();
             Console.WriteLine("Which type of account would you like to open?");
             Console.WriteLine();
-            Console.WriteLine($"1. Checking (${ CheckingAccount.MinimumDeposit } minimum deposit)");
+            Console.WriteLine("1. Checking");
             Console.WriteLine();
-            Console.WriteLine($"2. Savings (${ SavingsAccount.MinimumDeposit } minimum deposit)");
+            Console.WriteLine("2. Savings");
             Console.WriteLine();
         }
 

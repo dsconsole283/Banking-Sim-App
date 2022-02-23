@@ -5,25 +5,17 @@ using static BankingLibrary.Enums;
 
 namespace BankingLibrary
 {
-    public abstract class AccountModel
+    public class AccountModel
     {
-        private string _accountNumber;
+        public string AccountNumber { get; set; }
 
-        public string AccountNumber
-        {
-            get
-            {
-                return _accountNumber.Substring(4, 4);
-            }
-            set { _accountNumber = value; }
-        }
-
-        public AccountTypes AccountType { get; set; }
+        public string AccountType { get; set; }
 
         public decimal MinimumBalance = 0;
         public decimal Balance { get; set; }
+        public static decimal MinimumDeposit = 100.00M;
 
-        public virtual string GenerateAccountNumber()
+        public static string GenerateAccountNumber()
         {
             string output = "";
 

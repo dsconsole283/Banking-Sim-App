@@ -1,7 +1,9 @@
-﻿using BankingLibrary;
+﻿
+using DataAccessLibrary;
 using System;
+using System.Collections.Generic;
 
-namespace NADBankConsoleUI
+namespace BankConsoleUI
 {
     class Program
     {
@@ -12,6 +14,7 @@ namespace NADBankConsoleUI
             Console.ReadLine();
 
             BankControllerForConsole controller = new BankControllerForConsole();
+
             controller.RunMainMenu();
 
             Console.ReadLine();

@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankConsoleUI", "BankConsoleUI\BankConsoleUI.csproj", "{38AA210B-9401-43FD-A96A-8A15E762BAE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankConsoleUI", "BankConsoleUI\BankConsoleUI.csproj", "{38AA210B-9401-43FD-A96A-8A15E762BAE6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CF60DEBC-6C73-4ADF-A401-79E22F5F5A17} = {CF60DEBC-6C73-4ADF-A401-79E22F5F5A17}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankingLibrary", "BankingLibrary\BankingLibrary.csproj", "{E4AA497A-383A-4EF6-BD1E-39A3ED55BC6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankingLibrary", "BankingLibrary\BankingLibrary.csproj", "{E4AA497A-383A-4EF6-BD1E-39A3ED55BC6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankLibrary.Tests", "BankLibrary.Tests\BankLibrary.Tests.csproj", "{7B6F4987-97DD-473A-8C5C-3B6946B9EB29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankLibrary.Tests", "BankLibrary.Tests\BankLibrary.Tests.csproj", "{7B6F4987-97DD-473A-8C5C-3B6946B9EB29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLibrary", "DataAccess\DataAccessLibrary.csproj", "{CF60DEBC-6C73-4ADF-A401-79E22F5F5A17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +32,10 @@ Global
 		{7B6F4987-97DD-473A-8C5C-3B6946B9EB29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B6F4987-97DD-473A-8C5C-3B6946B9EB29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B6F4987-97DD-473A-8C5C-3B6946B9EB29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF60DEBC-6C73-4ADF-A401-79E22F5F5A17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF60DEBC-6C73-4ADF-A401-79E22F5F5A17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF60DEBC-6C73-4ADF-A401-79E22F5F5A17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF60DEBC-6C73-4ADF-A401-79E22F5F5A17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
